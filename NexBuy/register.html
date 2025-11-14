@@ -1,0 +1,122 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+  <title>Oxyy - Register</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body{font-family: 'Poppins', sans-serif;}
+    .bg-dark-panel{background:#0b1220;color:#fff}
+    .logo img{max-width:100%;height:auto}
+    .card{border-radius:12px}
+    .text-13{font-size:2rem}
+  </style>
+</head>
+<body>
+  <div class="container-fluid px-0">
+    <div class="row no-gutters min-vh-100"> 
+      <div class="col-md-6 d-flex flex-column align-items-center order-2 order-md-1">
+        <div class="container my-auto py-5">
+          <div class="row">
+            <div class="col-11 col-md-10 col-lg-9 col-xl-8 mx-auto">
+              <div class="card p-4 shadow-sm">
+                <h3 class="font-weight-300 text-9 mb-3">Sign up</h3>
+                <div id="alertPlaceholder"></div>
+                <form id="registerForm" novalidate>
+                  <div class="form-group font-weight-300">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" class="form-control" id="fullName" required placeholder="Enter Your Name">
+                  </div>
+                  <div class="form-group font-weight-300">
+                    <label for="emailAddress">Email Address</label>
+                    <input type="email" class="form-control" id="emailAddress" required placeholder="Enter Your Email">
+                  </div>
+                  <div class="form-group font-weight-300">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" minlength="6" required placeholder="Enter Password (min 6 chars)">
+                  </div>
+                  <div class="form-group font-weight-300 mt-2">
+                    <div class="custom-control custom-checkbox">
+                      <input id="agree" name="agree" class="custom-control-input" type="checkbox">
+                      <label class="custom-control-label" for="agree">I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</label>
+                    </div>
+                  </div>
+                  <button class="btn btn-dark btn-block font-weight-400 my-3" id="signupBtn" type="submit">Sign Up</button>
+                </form>
+                <p class="text-right text-muted small">Already a member? <a href="login.html">Sign in now</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 bg-dark-panel order-1 order-md-2 d-flex flex-column">
+        <div class="container h-100 d-flex flex-column justify-content-center">
+          <div class="row no-gutters">
+            <div class="col-11 col-md-10 mx-auto text-center">
+              <div class="logo mb-4"> <a href="#" title="Oxyy"><img src="nexbuy.png" alt="Oxyy"></a> </div>
+              <h1 class="text-13 font-weight-400 mb-3">Best Deals, Best Prices, Fast Delivery</h1>
+              <p style="color: #cecece;">Consoles, Games, Accessories, Electronics, Phones</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+  // Utility: show bootstrap-like alerts
+  function showAlert(message, type = 'success'){
+    const holder = document.getElementById('alertPlaceholder');
+    holder.innerHTML = '<div class="alert alert-'+type+'" role="alert">'+message+'</div>';
+    setTimeout(()=> holder.innerHTML = '', 4000);
+  }
+
+  // Read users from localStorage (returns object mapping email -> {name, password})
+  function readUsers(){
+    try{
+      return JSON.parse(localStorage.getItem('oxy_users') || '{}');
+    }catch(e){
+      return {};
+    }
+  }
+  function writeUsers(obj){
+    localStorage.setItem('oxy_users', JSON.stringify(obj));
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('emailAddress').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    const agree = document.getElementById('agree').checked;
+
+    // basic client-side validation
+    if(!name){ showAlert('Please enter your full name.', 'danger'); return; }
+    if(!email || !/^\S+@\S+\.\S+$/.test(email)){ showAlert('Please enter a valid email address.', 'danger'); return; }
+    if(!password || password.length < 6){ showAlert('Password must be at least 6 characters.', 'danger'); return; }
+    if(!agree){ showAlert('You must agree to the Terms and Privacy Policy.', 'danger'); return; }
+
+    const users = readUsers();
+    if(users[email]){ showAlert('An account with that email already exists. Please log in.', 'danger');
+      // Optionally redirect to login after a short delay
+      setTimeout(()=> location.href = 'login.html', 1500);
+      return;
+    }
+
+    // Store user (NOTE: storing plain passwords is insecure — only for demo/local use)
+    users[email] = { name: name, password: password, created: new Date().toISOString() };
+    writeUsers(users);
+
+    showAlert('Registration successful! Redirecting to login...', 'success');
+    setTimeout(()=> location.href = 'login.html', 1200);
+  });
+  </script>
+</body>
+</html>
+

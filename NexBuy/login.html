@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oxyy - Login</title>
+
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .container-fluid {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .left-panel {
+      flex: 1;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+    .right-panel {
+      flex: 1;
+      background-color: #0b1220;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 30px;
+    }
+    .logo img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .card h3 {
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #222;
+    }
+    .text-muted {
+      color: #6c757d;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: right;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <!-- Left Panel -->
+    <div class="left-panel">
+      <div class="card">
+        <h3>Sign In</h3>
+        <div id="alertPlaceholder"></div>
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Enter your password">
+          </div>
+          <button class="btn" type="submit">Login</button>
+        </form>
+        <p class="text-muted">
+          Don’t have an account? <a href="register.html">Sign Up</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <div class="logo">
+        <img src="nexbuy.png" alt="NexBuy Logo">
+      </div>
+      <h1>Welcome Back!</h1>
+      <p>Shop smarter with the best deals, prices, and delivery times.</p>
+    </div>
+  </div>
+
+  <!-- JS for Login -->
+  <script>
+    function showAlert(msg, type) {
+      const alertDiv = document.getElementById("alertPlaceholder");
+      alertDiv.innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
+      setTimeout(() => alertDiv.innerHTML = "", 3000);
+    }
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem("oxy_users") || "{}"); }
+      catch (e) { return {}; }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        showAlert("Please fill out both fields.", "danger");
+        return;
+      }
+
+      const users = getUsers();
+      if (!users[email]) {
+        showAlert("No account found with this email.", "danger");
+        return;
+      }
+
+      if (users[email].password !== password) {
+        showAlert("Incorrect password.", "danger");
+        return;
+      }
+
+      showAlert("Login successful! Redirecting...", "success");
+      localStorage.setItem("oxy_session", JSON.stringify({ email: email, name: users[email].name }));
+      setTimeout(() => window.location.href = "index.html", 1200);
+    });
+  </script>
+</body>
+</html>
